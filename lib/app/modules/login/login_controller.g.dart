@@ -49,7 +49,34 @@ mixin _$LoginController on _LoginBase, Store {
     }, _$passwordAtom, name: '${_$passwordAtom.name}_set');
   }
 
+  final _$isLoadingAtom = Atom(name: '_LoginBase.isLoading');
+
+  @override
+  bool get isLoading {
+    _$isLoadingAtom.context.enforceReadPolicy(_$isLoadingAtom);
+    _$isLoadingAtom.reportObserved();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.context.conditionallyRunInAction(() {
+      super.isLoading = value;
+      _$isLoadingAtom.reportChanged();
+    }, _$isLoadingAtom, name: '${_$isLoadingAtom.name}_set');
+  }
+
   final _$_LoginBaseActionController = ActionController(name: '_LoginBase');
+
+  @override
+  dynamic setLoading(bool status) {
+    final _$actionInfo = _$_LoginBaseActionController.startAction();
+    try {
+      return super.setLoading(status);
+    } finally {
+      _$_LoginBaseActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   dynamic changeEmail(String text) {

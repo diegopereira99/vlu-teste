@@ -16,7 +16,8 @@ abstract class _LoginBase with Store {
   final LoginRepository loginRepository;
   UserModel userLogged;
   final LoginLocalStorage loginLocalStorage = Modular.get<LoginLocalStorage>();
-  UserData userData;
+  UserData userData = Modular.get<UserData>();
+
   _LoginBase(this.loginRepository);
 
   @observable
@@ -25,6 +26,12 @@ abstract class _LoginBase with Store {
   @observable
   String password = '';
 
+  @observable
+  bool isLoading = false;
+
+  @action
+  setLoading(bool status)=> isLoading = status;
+
   @action
   changeEmail(String text)=> email = text;
 
@@ -32,19 +39,21 @@ abstract class _LoginBase with Store {
   changePassword(String text)=> password = text;
 
   @computed
-  bool get checkForm => password.isNotEmpty && email.contains("@") && password.length > 6;
+  bool get checkForm => password.isNotEmpty && email.contains("@") && password.length > 6; 
+
 
   login() async{
+    this.setLoading(true);
     try {
       UserModel user =  await this.loginRepository.login(email: email, password: password);
       if(user != null) {
         await this.loginLocalStorage.store('user_info', jsonEncode(user.toJson())); 
-        this.userData = Modular.get<UserData>();
         this.userData.actualUser = user;
       }else {
         throw("error");
       }
     } catch (e) {
+      this.setLoading(false);
       throw("error");
     }
   }

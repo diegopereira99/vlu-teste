@@ -62,15 +62,24 @@ class _LoginPageState extends State<LoginPage> {
                     return RaisedButton(
                       color: Colors.purple,
                       disabledColor: Colors.purple.withOpacity(0.7),
-                      onPressed: controller.checkForm ? () async{
+                      onPressed: controller.checkForm && !controller.isLoading ? () async{
                         try {
                           await controller.login();
                           Modular.to.pushReplacementNamed('/home');
                         } catch (e) {
+                          controller.setLoading(false);
                           this.showSnackbarError();
                         }
                       }: null,
-                      child: Text(
+                      child: controller.isLoading ? 
+                      Container(
+                        height: 25,
+                        width: 25,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ) 
+                      : Text(
                         "LOGIN",
                         style: TextStyle(
                           color: Colors.white
